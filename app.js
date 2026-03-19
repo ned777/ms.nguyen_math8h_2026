@@ -36,7 +36,7 @@ function getCategoryPercent(catId) {
   const earned = parseFloat(document.getElementById(catId + '-earned').value);
   const total  = parseFloat(document.getElementById(catId + '-total').value);
   if (isNaN(earned) || isNaN(total) || total <= 0) return null;
-  return Math.min(100, (earned / total) * 100);
+  return (earned / total) * 100;
 }
 
 function getGrade(pct) {
@@ -65,7 +65,7 @@ function calculate() {
 
     if (pct !== null) {
       pctEl.textContent  = pct.toFixed(1) + '%';
-      barEl.style.width  = pct + '%';
+      barEl.style.width  = Math.min(100, pct) + '%';
       weightedSum       += pct * cat.weight;
       totalWeight       += cat.weight;
       anyEntered         = true;
@@ -85,7 +85,7 @@ function calculate() {
     letterEl.textContent = '?';
     pctEl.textContent    = '—%';
     labelEl.textContent  = 'Enter scores above to see your grade!';
-    ['teacher-img-left', 'teacher-img-right'].forEach(id => {
+    ['teacher-img-l1','teacher-img-l2','teacher-img-r1','teacher-img-r2'].forEach(id => {
       const el = document.getElementById(id);
       if (el) el.hidden = true;
     });
@@ -104,7 +104,7 @@ function calculate() {
   // ---- Update teacher images ----
   const imgMap = { A: 'a.jpg', B: 'b.jpg', C: 'c.jpg', D: 'd.jpg', F: 'f.jpg' };
   const imgSrc = imgMap[gradeInfo.letter];
-  ['teacher-img-left', 'teacher-img-right'].forEach(id => {
+  ['teacher-img-l1','teacher-img-l2','teacher-img-r1','teacher-img-r2'].forEach(id => {
     const el = document.getElementById(id);
     if (!el) return;
     if (el.getAttribute('src') !== imgSrc) {
@@ -149,11 +149,12 @@ function showWeakness(percents) {
   const entered = CATEGORIES.filter(c => percents[c.id] !== null);
   if (entered.length === 0) { card.hidden = true; return; }
 
-  card.hidden = false;
-
   const sorted  = entered.slice().sort((a, b) => percents[a.id] - percents[b.id]);
   const weakest = sorted[0];
   const weakPct = percents[weakest.id];
+
+  if (weakPct >= 90) { card.hidden = true; return; }
+  card.hidden = false;
 
   let msg = '';
   if (weakPct < 60) {
@@ -163,7 +164,7 @@ function showWeakness(percents) {
   } else if (weakPct < 80) {
     msg = `Your <strong>${weakest.name}</strong> is your lowest at ${weakPct.toFixed(1)}%, but you're passing! Push a little harder here to level up your grade.`;
   } else {
-    msg = `All your categories look solid! Your lowest is <strong>${weakest.name}</strong> at ${weakPct.toFixed(1)}% — not bad at all! Keep it up.`;
+    msg = `Your <strong>${weakest.name}</strong> is your lowest category at ${weakPct.toFixed(1)}%. You're doing well — just keep it up!`;
   }
 
   textEl.innerHTML = msg;
@@ -277,7 +278,7 @@ function showBreakdown(percents) {
     row.innerHTML = `
       <span class="breakdown-label">${cat.name}</span>
       <div class="breakdown-bar-bg">
-        <div class="breakdown-bar-fill" style="background:${cat.color}; width:${pct !== null ? pct : 0}%"></div>
+        <div class="breakdown-bar-fill" style="background:${cat.color}; width:${pct !== null ? Math.min(100,pct) : 0}%"></div>
       </div>
       <span class="breakdown-val">
         ${pct !== null ? pct.toFixed(1) + '%' : '<span style="color:#9ca3af">—</span>'}

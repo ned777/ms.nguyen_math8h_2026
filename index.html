@@ -250,19 +250,20 @@ input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
   gap: 20px;
 }
 
-/* Grade Bubble */
-.grade-bubble-wrap {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 14px;
-}
 
+/* --- Teacher Images --- */
 .teacher-row {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 16px;
+  gap: 12px;
+}
+
+.teacher-imgs-left,
+.teacher-imgs-right {
+  display: flex;
+  gap: 8px;
+  align-items: center;
 }
 
 .teacher-img {
@@ -273,7 +274,6 @@ input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
   object-position: 50% 15%;
   box-shadow: var(--shadow-lg);
   border: 4px solid transparent;
-  transition: border-color .4s;
   animation: popIn .4s cubic-bezier(.34,1.56,.64,1);
 }
 
@@ -282,10 +282,13 @@ input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
   to   { transform: scale(1);   opacity: 1; }
 }
 
-@media (max-width: 600px) {
-  .teacher-img { width: 75px; height: 75px; }
-  .teacher-row { gap: 8px; }
+.grade-bubble-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
 }
+
 
 .grade-bubble {
   width: 130px;
@@ -385,12 +388,16 @@ input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
 
 .goal-pill {
   flex: 1;
-  min-width: 160px;
+  min-width: 140px;
+  max-width: 100%;
   border-radius: var(--radius-sm);
   padding: 16px 14px;
   border: 2px solid;
   position: relative;
   transition: transform .15s;
+  overflow: hidden;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .goal-pill:hover { transform: translateY(-2px); }
@@ -483,10 +490,32 @@ footer {
 }
 
 /* --- Responsive --- */
-@media (max-width: 500px) {
-  .cards-grid { grid-template-columns: 1fr 1fr; }
-  .goals-row  { flex-direction: column; }
-  .breakdown-label { min-width: 100px; font-size: 11px; }
+@media (max-width: 600px) {
+  .cards-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .score-card { padding: 14px 10px 12px; }
+  .card-emoji { font-size: 22px; }
+  .card-label { font-size: 14px; }
+  .card-weight { font-size: 11px; margin-bottom: 8px; }
+  .score-inputs { gap: 4px; }
+  .out-of { font-size: 10px; }
+  input[type="number"] { font-size: 13px; padding: 7px 4px; }
+  .cat-pct { font-size: 20px; }
+  .goals-row { flex-direction: column; }
+  .breakdown-label { min-width: 80px; font-size: 11px; }
+  .weight-legend { gap: 6px; }
+  .chip { font-size: 11px; padding: 5px 12px; }
+  h1 { font-size: clamp(28px, 7vw, 44px); }
+  .teacher-imgs-left .teacher-img:last-child,
+  .teacher-imgs-right .teacher-img:last-child { display: none; }
+  .teacher-img { width: 70px !important; height: 70px !important; }
+  .teacher-row { gap: 8px !important; }
+  .grade-bubble { width: 100px !important; height: 100px !important; }
+  .bubble-letter { font-size: 38px !important; }
+  .bubble-pct { font-size: 12px !important; }
+  .grade-label { font-size: 14px; }
 }
 
 </style>
@@ -648,7 +677,7 @@ function getCategoryPercent(catId) {
   const earned = parseFloat(document.getElementById(catId + '-earned').value);
   const total  = parseFloat(document.getElementById(catId + '-total').value);
   if (isNaN(earned) || isNaN(total) || total <= 0) return null;
-  return Math.min(100, (earned / total) * 100);
+  return (earned / total) * 100;
 }
 
 function getGrade(pct) {
@@ -677,7 +706,7 @@ function calculate() {
 
     if (pct !== null) {
       pctEl.textContent  = pct.toFixed(1) + '%';
-      barEl.style.width  = pct + '%';
+      barEl.style.width  = Math.min(100, pct) + '%';
       weightedSum       += pct * cat.weight;
       totalWeight       += cat.weight;
       anyEntered         = true;
@@ -697,7 +726,7 @@ function calculate() {
     letterEl.textContent = '?';
     pctEl.textContent    = '—%';
     labelEl.textContent  = 'Enter scores above to see your grade!';
-    ['teacher-img-l1', 'teacher-img-l2', 'teacher-img-r1', 'teacher-img-r2'].forEach(id => {
+    ['teacher-img-l1','teacher-img-l2','teacher-img-r1','teacher-img-r2'].forEach(id => {
       const el = document.getElementById(id);
       if (el) el.hidden = true;
     });
@@ -716,7 +745,7 @@ function calculate() {
   // ---- Update teacher images ----
   const imgMap = { A: 'a.jpg', B: 'b.jpg', C: 'c.jpg', D: 'd.jpg', F: 'f.jpg' };
   const imgSrc = imgMap[gradeInfo.letter];
-  ['teacher-img-l1', 'teacher-img-l2', 'teacher-img-r1', 'teacher-img-r2'].forEach(id => {
+  ['teacher-img-l1','teacher-img-l2','teacher-img-r1','teacher-img-r2'].forEach(id => {
     const el = document.getElementById(id);
     if (!el) return;
     if (el.getAttribute('src') !== imgSrc) {
@@ -741,7 +770,7 @@ function calculate() {
 function gradeLabel(gradeInfo, overall) {
   const msgs = {
     A: `You're crushing it! 🎉 Keep it up!`,
-    B: `Great job! You're doing great! 💪`,
+    B: `Great job! You're almost at an A! 💪`,
     C: `You passed! But there's room to grow 🙂`,
     D: `Hang in there — you can turn this around! 📖`,
     F: `Don't give up! Every assignment helps. Let's fix this! 🔥`,
@@ -761,11 +790,12 @@ function showWeakness(percents) {
   const entered = CATEGORIES.filter(c => percents[c.id] !== null);
   if (entered.length === 0) { card.hidden = true; return; }
 
-  card.hidden = false;
-
   const sorted  = entered.slice().sort((a, b) => percents[a.id] - percents[b.id]);
   const weakest = sorted[0];
   const weakPct = percents[weakest.id];
+
+  if (weakPct >= 90) { card.hidden = true; return; }
+  card.hidden = false;
 
   let msg = '';
   if (weakPct < 60) {
@@ -775,7 +805,7 @@ function showWeakness(percents) {
   } else if (weakPct < 80) {
     msg = `Your <strong>${weakest.name}</strong> is your lowest at ${weakPct.toFixed(1)}%, but you're passing! Push a little harder here to level up your grade.`;
   } else {
-    msg = `All your categories look solid! Your lowest is <strong>${weakest.name}</strong> at ${weakPct.toFixed(1)}% — not bad at all! Keep it up.`;
+    msg = `Your <strong>${weakest.name}</strong> is your lowest category at ${weakPct.toFixed(1)}%. You're doing well — just keep it up!`;
   }
 
   textEl.innerHTML = msg;
@@ -889,7 +919,7 @@ function showBreakdown(percents) {
     row.innerHTML = `
       <span class="breakdown-label">${cat.name}</span>
       <div class="breakdown-bar-bg">
-        <div class="breakdown-bar-fill" style="background:${cat.color}; width:${pct !== null ? pct : 0}%"></div>
+        <div class="breakdown-bar-fill" style="background:${cat.color}; width:${pct !== null ? Math.min(100,pct) : 0}%"></div>
       </div>
       <span class="breakdown-val">
         ${pct !== null ? pct.toFixed(1) + '%' : '<span style="color:#9ca3af">—</span>'}
