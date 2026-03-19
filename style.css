@@ -115,7 +115,7 @@ main {
 
 .cards-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
   gap: 16px;
   margin-bottom: 28px;
 }
@@ -483,29 +483,46 @@ footer {
 
 /* --- Responsive --- */
 @media (max-width: 600px) {
+  /* Prevent overflow */
+  html, body {
+    overflow-x: hidden;
+    max-width: 100vw;
+  }
+  body { padding: 0 10px 60px; }
+  main { width: 100%; max-width: 100%; padding: 0; }
+  header { padding: 24px 10px 20px; }
+
+  h1 { font-size: clamp(26px, 7vw, 40px); }
+  .header-sub { font-size: 14px; }
+  .weight-legend { gap: 5px; }
+  .chip { font-size: 11px; padding: 5px 11px; }
+
+  /* Cards */
   .cards-grid {
     grid-template-columns: 1fr 1fr;
-    gap: 10px;
+    gap: 8px;
+    margin-bottom: 18px;
   }
-  .score-card { padding: 14px 10px 12px; }
-  .card-emoji { font-size: 22px; }
-  .card-label { font-size: 14px; }
-  .card-weight { font-size: 11px; margin-bottom: 8px; }
-  .score-inputs { gap: 4px; }
-  .out-of { font-size: 10px; }
-  input[type="number"] { font-size: 13px; padding: 7px 4px; }
-  .cat-pct { font-size: 20px; }
+  .score-card { padding: 12px 8px 10px; }
+  .card-emoji { font-size: 20px; margin-bottom: 4px; }
+  .card-label { font-size: 13px; }
+  .card-weight { font-size: 10px; margin-bottom: 8px; }
+  .score-inputs { gap: 3px; margin-bottom: 8px; }
+  .out-of { font-size: 9px; }
+  input[type="number"] { font-size: 12px; padding: 6px 3px; border-radius: 8px; }
+  .cat-pct { font-size: 18px; margin-bottom: 6px; }
+
+  /* Grade bubble + images — show all 4 */
+  .teacher-row { gap: 4px !important; }
+  .teacher-img { width: 52px !important; height: 52px !important; border-width: 3px !important; }
+  .grade-bubble { width: 90px !important; height: 90px !important; }
+  .bubble-letter { font-size: 34px !important; }
+  .bubble-pct { font-size: 11px !important; }
+  .grade-label { font-size: 13px; }
+
+  /* Results */
   .goals-row { flex-direction: column; }
-  .breakdown-label { min-width: 80px; font-size: 11px; }
-  .weight-legend { gap: 6px; }
-  .chip { font-size: 11px; padding: 5px 12px; }
-  h1 { font-size: clamp(28px, 7vw, 44px); }
-  .teacher-imgs-left .teacher-img:last-child,
-  .teacher-imgs-right .teacher-img:last-child { display: none; }
-  .teacher-img { width: 70px !important; height: 70px !important; }
-  .teacher-row { gap: 8px !important; }
-  .grade-bubble { width: 100px !important; height: 100px !important; }
-  .bubble-letter { font-size: 38px !important; }
-  .bubble-pct { font-size: 12px !important; }
-  .grade-label { font-size: 14px; }
+  .breakdown-label { min-width: 70px; font-size: 10px; }
+  .breakdown-val { font-size: 11px; min-width: 38px; }
+  .section-tag { font-size: 16px; }
 }
