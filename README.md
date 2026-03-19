@@ -149,10 +149,4 @@ No frameworks, no build tools, no dependencies — just open `index.html` in any
 
 ---
 
-## Contact
 
-**Ms. Shiline Nguyen**
- shiline.nguyen@sausdlearns.net
- (714) 558-5100
- Grades: Aeries Parent Portal & Canvas
- Tutoring: Tues & Thurs 2:30–3:00 PM · Room 209
